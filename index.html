@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helmy Tri Wicaksono - Portfolio Desain 3D</title>
+    <!-- Memuat Tailwind CSS dari CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat AOS (Animate On Scroll) CSS & JS -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    
+    <!-- Konfigurasi Tema Monokrom & Font Inter -->
+    <style>
+        /* Menggunakan font Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;800&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+            cursor: none; /* Sembunyikan kursor asli untuk diganti custom cursor */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Cursor Styles */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #000;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(0, 0, 0, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Hover effect for cursor */
+        body.hovering .cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+
+        /* Typography Solino Style */
+        h1, h2, h3 {
+            letter-spacing: -0.02em;
+        }
+
+        /* Navbar Transition */
+        #navbar {
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), padding 0.4s ease, background-color 0.4s ease;
+        }
+        
+        /* Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #000;
+            z-index: 1001;
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalFadeIn 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* Lebih smooth */
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .modal-content {
+                flex-direction: row;
+                height: 80vh;
+            }
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Project Card */
+        .project-card {
+            cursor: none; /* Hide cursor here too */
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .project-hidden {
+            display: none;
+        }
+        
+        .project-card img {
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s ease;
+            filter: grayscale(100%);
+            will-change: transform; /* Optimasi performa */
+        }
+        
+        .project-card:hover img {
+            transform: scale(1.1); /* Zoom lebih besar sedikit */
+            filter: grayscale(0%);
+        }
+
+        .project-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+
+        .filter-btn.active {
+            color: #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        #back-to-top {
+            transition: opacity 0.4s, transform 0.4s;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        /* Parallax Background Helper */
+        .parallax-bg {
+            will-change: transform;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-black': '#000000',
+                        'secondary-dark': '#1a1a1a',
+                        'neutral-gray': '#808080',
+                        'light-gray': '#f5f5f5',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased selection:bg-black selection:text-white">
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress"></div>
+
+    <!-- Navbar: Smart Hide/Show -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-transparent transition-all duration-300">
+        <div class="max-w-[1400px] mx-auto px-6 py-5 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-xl font-bold tracking-tighter text-black uppercase hover-trigger">
+                HELMY TRI<span class="font-light text-neutral-gray">.W</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-10 text-sm font-medium tracking-wide">
+                <a href="#home" class="text-black hover:text-neutral-gray transition duration-300 hover-trigger">BERANDA</a>
+                <a href="#projects" class="text-black hover:text-neutral-gray transition duration-300 hover-trigger">PROYEK</a>
+                <a href="#about" class="text-black hover:text-neutral-gray transition duration-300 hover-trigger">TENTANG</a>
+                <a href="#contact" class="text-black hover:text-neutral-gray transition duration-300 hover-trigger">KONTAK</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="menu-button" class="md:hidden text-black focus:outline-none hover-trigger">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="flex flex-col px-6 py-4 space-y-4 text-sm font-medium">
+                <a href="#home" class="text-black">BERANDA</a>
+                <a href="#projects" class="text-black">PROYEK</a>
+                <a href="#about" class="text-black">TENTANG</a>
+                <a href="#contact" class="text-black">KONTAK</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section: Parallax Effect -->
+    <header id="home" class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-secondary-dark">
+        <!-- Background Image with Parallax Class -->
+        <div class="parallax-bg absolute inset-0 h-[120%] -top-[10%] bg-[url('image/hero-bg.jpg')] bg-cover bg-center opacity-40"></div>
+        
+        <!-- Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-primary-dark/40"></div>
+        
+        <div class="relative z-10 text-center px-6 max-w-5xl mx-auto" data-aos="fade-up" data-aos-duration="1200">
+            <p class="text-neutral-gray text-sm md:text-base font-medium tracking-[0.3em] mb-6 uppercase animate-pulse">Architecture & Visualization</p>
+            <h1 class="text-5xl md:text-7xl lg:text-9xl font-extrabold text-white tracking-tighter mb-10 leading-none">
+                VISUALIZING<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">FUTURE.</span>
+            </h1>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <a href="#projects" class="hover-trigger px-10 py-4 bg-white text-black text-sm font-bold uppercase tracking-widest hover:bg-neutral-gray hover:text-white transition duration-500 transform hover:-translate-y-1">
+                    Lihat Proyek
+                </a>
+                <a href="#contact" class="hover-trigger px-10 py-4 border border-white/30 backdrop-blur-sm text-white text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition duration-500 transform hover:-translate-y-1">
+                    Hubungi Saya
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-32 bg-white relative">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20" data-aos="fade-up">
+                <div>
+                    <h2 class="text-5xl md:text-6xl font-bold text-black mb-4 tracking-tight">Karya Pilihan</h2>
+                    <p class="text-neutral-gray text-xl font-light">Koleksi desain eksterior & interior terbaik.</p>
+                </div>
+                <div class="mt-8 md:mt-0 space-x-8 text-sm font-bold tracking-widest text-neutral-gray uppercase" id="portfolio-filters">
+                    <button class="filter-btn active hover:text-black transition pb-2 hover-trigger" onclick="filterProjects('all', this)">Semua</button>
+                    <button class="filter-btn hover:text-black transition pb-2 hover-trigger" onclick="filterProjects('exterior', this)">Eksterior</button>
+                    <button class="filter-btn hover:text-black transition pb-2 hover-trigger" onclick="filterProjects('interior', this)">Interior</button>
+                </div>
+            </div>
+
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2" id="projects-grid">
+                
+                <!-- Project Items (Using hover-trigger for cursor effect) -->
+                <!-- Project 1 -->
+                <div class="project-card group relative h-[500px] w-full bg-gray-100 hover-trigger" data-category="exterior" data-aos="fade-up" data-aos-delay="100" onclick="openModal(0)">
+                    <img src="image/mr.yanto.jpg" alt="Rumah Mr. Yanto" class="w-full h-full object-cover">
+                    <div class="project-overlay absolute inset-0 flex flex-col justify-end p-10">
+                        <p class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3 border-l-2 border-white pl-3">Eksterior</p>
+                        <h3 class="text-white text-3xl font-bold mb-2">Rumah Mr. Yanto</h3>
+                        <p class="text-white/60 text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">Klik untuk detail</p>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card group relative h-[500px] w-full bg-gray-100 hover-trigger" data-category="interior" data-aos="fade-up" data-aos-delay="200" onclick="openModal(1)">
+                    <img src="image/ruang tamu modern.jpg" alt="Interior Modern" class="w-full h-full object-cover">
+                    <div class="project-overlay absolute inset-0 flex flex-col justify-end p-10">
+                        <p class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3 border-l-2 border-white pl-3">Interior</p>
+                        <h3 class="text-white text-3xl font-bold mb-2">Ruang Tamu Modern</h3>
+                        <p class="text-white/60 text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">Klik untuk detail</p>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="project-card group relative h-[500px] w-full bg-gray-100 hover-trigger" data-category="exterior" data-aos="fade-up" data-aos-delay="300" onclick="openModal(2)">
+                    <img src="image/project2.jpg" alt="Rumah Mr. H Mustofa" class="w-full h-full object-cover">
+                    <div class="project-overlay absolute inset-0 flex flex-col justify-end p-10">
+                        <p class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3 border-l-2 border-white pl-3">Eksterior</p>
+                        <h3 class="text-white text-3xl font-bold mb-2">Rumah Mr. H Mustofa</h3>
+                        <p class="text-white/60 text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">Klik untuk detail</p>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="project-card group relative h-[500px] w-full bg-gray-100 hover-trigger" data-category="interior" data-aos="fade-up" data-aos-delay="400" onclick="openModal(3)">
+                    <img src="image/ruang makan.jpg" alt="Area Makan" class="w-full h-full object-cover">
+                    <div class="project-overlay absolute inset-0 flex flex-col justify-end p-10">
+                        <p class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3 border-l-2 border-white pl-3">Interior</p>
+                        <h3 class="text-white text-3xl font-bold mb-2">Area Makan Terbuka</h3>
+                        <p class="text-white/60 text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">Klik untuk detail</p>
+                    </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="project-card group relative h-[500px] w-full bg-gray-100 hover-trigger" data-category="exterior" data-aos="fade-up" data-aos-delay="500" onclick="openModal(4)">
+                    <img src="image/muchromin.jpg" alt="Rumah Mr. Muchromin" class="w-full h-full object-cover">
+                    <div class="project-overlay absolute inset-0 flex flex-col justify-end p-10">
+                        <p class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3 border-l-2 border-white pl-3">Eksterior</p>
+                        <h3 class="text-white text-3xl font-bold mb-2">Rumah Mr. Muchromin</h3>
+                        <p class="text-white/60 text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">Klik untuk detail</p>
+                    </div>
+                </div>
+
+                 <!-- Project 6 -->
+                 <div class="project-card group relative h-[500px] w-full bg-gray-100 hover-trigger" data-category="interior" data-aos="fade-up" data-aos-delay="600" onclick="openModal(5)">
+                    <img src="image/kamartidur.jpg" alt="Kamar Tidur" class="w-full h-full object-cover">
+                    <div class="project-overlay absolute inset-0 flex flex-col justify-end p-10">
+                        <p class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3 border-l-2 border-white pl-3">Interior</p>
+                        <h3 class="text-white text-3xl font-bold mb-2">Kamar Tidur Utama</h3>
+                        <p class="text-white/60 text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500">Klik untuk detail</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 bg-light-gray relative">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-20 items-center">
+                <!-- Text -->
+                <div class="lg:w-1/2 order-2 lg:order-1" data-aos="fade-up" data-aos-duration="1000">
+                    <div class="w-20 h-1 bg-black mb-8"></div>
+                    <h2 class="text-5xl lg:text-7xl font-extrabold text-black mb-8 leading-none tracking-tight">
+                        SENI <br/> TEKNOLOGI <br/> RUANG
+                    </h2>
+                    <p class="text-secondary-dark text-xl leading-relaxed mb-10 font-light">
+                        "Desain bukan hanya tentang apa yang terlihat dan terasa. Desain adalah tentang bagaimana itu bekerja."
+                    </p>
+                    <p class="text-neutral-gray leading-relaxed mb-8">
+                        Halo, saya <strong>Helmy Tri Wicaksono</strong>. Sebagai seniman visualisasi 3D, saya menggabungkan presisi teknis dengan visi artistik. Fokus saya adalah menciptakan ruang yang tidak hanya indah dipandang, tetapi juga nyaman dihuni dan fungsional.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-y-6 text-sm font-bold tracking-widest text-black border-t border-gray-300 pt-10 uppercase">
+                        <div class="hover-trigger flex items-center"><span class="w-2 h-2 bg-black mr-3 rounded-full"></span>SketchUp Pro</div>
+                        <div class="hover-trigger flex items-center"><span class="w-2 h-2 bg-black mr-3 rounded-full"></span>AutoCAD</div>
+                        <div class="hover-trigger flex items-center"><span class="w-2 h-2 bg-black mr-3 rounded-full"></span>Enscape Rendering</div>
+                        <div class="hover-trigger flex items-center"><span class="w-2 h-2 bg-black mr-3 rounded-full"></span>Adobe Photoshop</div>
+                    </div>
+                </div>
+
+                <!-- Image -->
+                <div class="lg:w-1/2 order-1 lg:order-2 h-[600px] w-full relative group hover-trigger" data-aos="fade-left" data-aos-duration="1200">
+                    <div class="absolute inset-0 bg-black translate-x-4 translate-y-4 transition-transform duration-500 group-hover:translate-x-6 group-hover:translate-y-6"></div>
+                    <img src="image/about-photo.png" alt="Portrait" class="relative z-10 w-full h-full object-cover grayscale transition duration-700 group-hover:grayscale-0">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 bg-secondary-dark text-white relative overflow-hidden">
+        <!-- Moving background element -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] animate-pulse"></div>
+
+        <div class="max-w-5xl mx-auto px-6 text-center relative z-10" data-aos="zoom-in-up" data-aos-duration="1000">
+            <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">MARI BERKARYA BERSAMA</h2>
+            <p class="text-gray-400 text-xl mb-16 font-light max-w-2xl mx-auto">Apakah Anda memiliki proyek arsitektur yang membutuhkan visualisasi kelas dunia? Mari diskusikan.</p>
+            
+            <div class="bg-white/5 backdrop-blur-md p-10 md:p-16 border border-white/10 shadow-2xl">
+                <form action="mailto:helmy.wisudha@gmail.com" method="post" enctype="text/plain" class="space-y-8 text-left">
+                    <div class="grid md:grid-cols-2 gap-10">
+                        <div class="group">
+                            <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 group-hover:text-white transition">Nama</label>
+                            <input type="text" name="name" class="hover-trigger w-full bg-transparent border-b border-gray-700 py-4 text-white text-lg focus:outline-none focus:border-white transition placeholder-gray-700" placeholder="Siapa nama Anda?">
+                        </div>
+                        <div class="group">
+                            <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 group-hover:text-white transition">Email</label>
+                            <input type="email" name="email" class="hover-trigger w-full bg-transparent border-b border-gray-700 py-4 text-white text-lg focus:outline-none focus:border-white transition placeholder-gray-700" placeholder="alamat@email.com">
+                        </div>
+                    </div>
+                    <div class="group">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 group-hover:text-white transition">Pesan</label>
+                        <textarea name="message" rows="4" class="hover-trigger w-full bg-transparent border-b border-gray-700 py-4 text-white text-lg focus:outline-none focus:border-white transition placeholder-gray-700" placeholder="Ceritakan detail proyek Anda..."></textarea>
+                    </div>
+                    <div class="text-center pt-8">
+                        <button type="submit" class="hover-trigger px-12 py-5 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition transform hover:scale-105 duration-300">Kirim Pesan</button>
+                    </div>
+                </form>
+
+                <div class="mt-16 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+                    <a href="mailto:helmy.wisudha@gmail.com" class="hover-trigger hover:text-white transition flex items-center gap-3 mb-4 md:mb-0">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> helmy.wisudha@gmail.com
+                    </a>
+                    <a href="tel:082242034190" class="hover-trigger hover:text-white transition">
+                        +62 822 4203 4190
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12 border-t border-white/10">
+        <div class="max-w-[1400px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0 text-center md:text-left">
+                <p class="font-bold text-2xl tracking-tighter mb-1">HELMY TRI W.</p>
+                <p class="text-gray-600 text-xs uppercase tracking-widest">© 2025 All Rights Reserved.</p>
+            </div>
+            <div class="flex space-x-8 text-sm text-gray-400 uppercase tracking-wider font-medium">
+                <a href="#" class="hover:text-white transition hover-trigger">Instagram</a>
+                <a href="https://www.linkedin.com/in/joshuahelmy" class="hover:text-white transition hover-trigger">LinkedIn</a>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hover-trigger fixed bottom-10 right-10 bg-black text-white p-5 rounded-full shadow-2xl z-40 hover:bg-neutral-gray transition transform hover:scale-110 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    <!-- MODAL GALERI -->
+    <div id="project-modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <!-- Image Side -->
+            <div class="w-full md:w-2/3 h-64 md:h-full bg-black relative group overflow-hidden">
+                <img id="modal-image" src="" class="w-full h-full object-cover opacity-0 transition-all duration-700 transform scale-105">
+                <!-- Navigation Arrows -->
+                <button onclick="prevProject(event)" class="hover-trigger absolute left-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white text-white hover:text-black p-4 rounded-full backdrop-blur-md transition transform hover:scale-110 opacity-0 group-hover:opacity-100 duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="nextProject(event)" class="hover-trigger absolute right-6 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white text-white hover:text-black p-4 rounded-full backdrop-blur-md transition transform hover:scale-110 opacity-0 group-hover:opacity-100 duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Content Side -->
+            <div class="w-full md:w-1/3 p-10 md:p-14 bg-white flex flex-col justify-center relative">
+                <button onclick="closeModal()" class="hover-trigger absolute top-8 right-8 text-black hover:text-gray-500 transition transform hover:rotate-90 duration-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <div class="mb-auto mt-10">
+                    <p id="modal-category" class="text-neutral-gray text-xs font-bold uppercase tracking-widest mb-4">Detail Proyek</p>
+                    <h3 id="modal-title" class="text-4xl font-extrabold text-black mb-6 leading-tight tracking-tight"></h3>
+                    <div class="w-16 h-1 bg-black mb-8"></div>
+                    <p id="modal-description" class="text-secondary-dark text-lg leading-relaxed mb-8 font-light"></p>
+                </div>
+                
+                <div class="mt-8 pt-8 border-t border-gray-100 text-sm text-neutral-gray grid grid-cols-2 gap-6">
+                    <div>
+                        <span class="block text-black font-bold uppercase tracking-wider mb-1">Tahun</span>
+                        2024
+                    </div>
+                    <div>
+                        <span class="block text-black font-bold uppercase tracking-wider mb-1">Kategori</span>
+                        <span id="modal-cat-detail">Residential</span>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="block text-black font-bold uppercase tracking-wider mb-1">Software</span>
+                        SketchUp + Enscape
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 50,
+            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        });
+
+        // --- Custom Cursor Logic ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot moves instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline moves with delay (animation in CSS)
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover Effect for Cursor
+        const hoverTriggers = document.querySelectorAll('.hover-trigger, a, button, .project-card');
+        hoverTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            trigger.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // --- Smart Navbar Logic (Hide Down, Show Up) ---
+        const navbar = document.getElementById('navbar');
+        let lastScrollTop = 0;
+        
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Navbar behavior
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scroll Down -> Hide
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll Up -> Show
+                navbar.style.transform = 'translateY(0)';
+                // Change padding on scroll
+                if (scrollTop > 50) {
+                    navbar.classList.add('shadow-sm', 'py-3');
+                    navbar.classList.remove('py-5');
+                } else {
+                    navbar.classList.remove('shadow-sm', 'py-3');
+                    navbar.classList.add('py-5');
+                }
+            }
+            lastScrollTop = scrollTop;
+
+            // Scroll Progress Bar
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("scroll-progress").style.width = scrolled + "%";
+
+            // Parallax Hero Effect
+            const parallaxBg = document.querySelector('.parallax-bg');
+            if (parallaxBg) {
+                parallaxBg.style.transform = `translateY(${scrollTop * 0.5}px)`;
+            }
+
+            // Back to Top Button
+            const backToTop = document.getElementById('back-to-top');
+            if (scrollTop > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // --- Data Proyek ---
+        const projects = [
+            {
+                id: 0,
+                title: "Rumah Mr. Yanto",
+                category: "Exterior",
+                description: "Rumah dua lantai dengan atap pelana modern dan penggunaan roster/grill vertikal sebagai aksen fasad. Klien menginginkan tampilan yang berani namun tetap ramah lingkungan.",
+                image: "https://placehold.co/800x1000/cccccc/1a1a1a?text=RUMAH+MR+YANTO"
+            },
+            {
+                id: 1,
+                title: "Ruang Tamu Modern",
+                category: "Interior",
+                description: "Menggabungkan panel kayu gelap dan dinding beton ekspos untuk tampilan ruang keluarga yang elegan.",
+                image: "https://placehold.co/800x1000/1a1a1a/ffffff?text=INTERIOR+MODERN"
+            },
+            {
+                id: 2,
+                title: "Rumah Mr. H Mustofa",
+                category: "Exterior",
+                description: "Fasad bertingkat tiga dengan kombinasi batu alam gelap dan penanaman vertikal.",
+                image: "https://placehold.co/800x1000/1a1a1a/cccccc?text=RUMAH+MR+H+MUSTOFA"
+            },
+            {
+                id: 3,
+                title: "Area Makan Terbuka",
+                category: "Interior",
+                description: "Integrasi ruang makan dengan tangga, memaksimalkan pencahayaan alami.",
+                image: "https://placehold.co/800x1000/cccccc/4a4a4a?text=AREA+MAKAN"
+            },
+            {
+                id: 4,
+                title: "Rumah Mr. Muchromin",
+                category: "Exterior",
+                description: "Desain kontemporer dengan aksen kayu komposit berwarna coklat oranye.",
+                image: "https://placehold.co/800x1000/4a4a4a/cccccc?text=RUMAH+MR+MUCHROMIN"
+            },
+            {
+                id: 5,
+                title: "Kamar Tidur Utama",
+                category: "Interior",
+                description: "Desain kamar tidur dengan dinding beraksen kayu dan penyimpanan terintegrasi.",
+                image: "https://placehold.co/800x1000/4a4a4a/ffffff?text=KAMAR+TIDUR"
+            }
+        ];
+
+        // --- Filtering Logic ---
+        function filterProjects(category, btnElement) {
+            if (btnElement) {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                btnElement.classList.add('active');
+            }
+
+            const cards = document.querySelectorAll('.project-card');
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.classList.remove('project-hidden');
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => card.classList.add('project-hidden'), 300);
+                }
+            });
+            setTimeout(() => AOS.refresh(), 400);
+        }
+
+        // --- Modal Logic ---
+        const modal = document.getElementById('project-modal');
+        const modalImg = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-description');
+        const modalCat = document.getElementById('modal-category');
+        const modalCatDetail = document.getElementById('modal-cat-detail');
+        let currentProjectIndex = 0;
+
+        function openModal(index) {
+            currentProjectIndex = index;
+            updateModalContent();
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                modalImg.classList.remove('opacity-0');
+                modalImg.classList.remove('scale-105');
+                modalImg.classList.add('scale-100');
+            }, 50);
+        }
+
+        function closeModal() {
+            modalImg.classList.add('opacity-0');
+            modalImg.classList.add('scale-105');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+
+        function updateModalContent() {
+            const project = projects[currentProjectIndex];
+            modalImg.classList.add('opacity-50');
+            setTimeout(() => {
+                modalTitle.innerText = project.title;
+                modalDesc.innerText = project.description;
+                modalImg.src = project.image;
+                modalCat.innerText = project.category;
+                modalCatDetail.innerText = project.category === 'Exterior' ? 'Residential Exterior' : 'Residential Interior';
+                modalImg.classList.remove('opacity-50');
+            }, 200);
+        }
+
+        function nextProject(e) {
+            e.stopPropagation();
+            currentProjectIndex = (currentProjectIndex + 1) % projects.length;
+            updateModalContent();
+        }
+
+        function prevProject(e) {
+            e.stopPropagation();
+            currentProjectIndex = (currentProjectIndex - 1 + projects.length) % projects.length;
+            updateModalContent();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'flex') {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowRight') nextProject({ stopPropagation: () => {} });
+                if (e.key === 'ArrowLeft') prevProject({ stopPropagation: () => {} });
+            }
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
